@@ -7,14 +7,25 @@
       <button class="button" (click)="start()">Start</button>
     </div>
     <div class="main-content">
-      <div class="time">
-        {{time}}
+      <div class="stats">
+        <div class="stat-life"><span>Life:</span> {{life}}</div>
+        <div class="stat-time"><span>Time:</span> {{time}}</div>
+        <div class="statclue"> <!--<span>Clue:</span> {{clue}}--> </div>
       </div>
-      <div class="word" *ngIf="time > 10">
-        <div *ngFor="let letter of wordLetters" [ngClass]="{'red': letter!=' '}" class="letter">
-          <span>{{letter}}</span>
+      <div class="characters" *ngIf="showWord">
+        <button type="button" #newLetter *ngFor="let character of characters" (click)="compareLetter(newLetter)" [id]="character" class="character">
+          <span>{{character}}</span>
+        </button>
+      </div>
+      <div class="word" *ngIf="showWord">
+        <div *ngFor="let letter of letters" class="letter">
+          <span *ngIf="letter.show">{{letter.character}}</span>
         </div>
       </div>
+      <!--<div class="letter-input" *ngIf="showWord">
+        <input type="text" #newLetter maxlength="1"/>
+        <button type="button" (click)="compareLetter(newLetter.value)">Check</button>
+      </div>-->
     </div>
   </div>
 </div>

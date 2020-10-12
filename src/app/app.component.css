@@ -1,8 +1,49 @@
-.letter {
-  width: 20px;
-  height: 20px;
+.app-container {
+  width: 100vh;
+  margin: 10px auto;
+}
+h1 {
+  text-align: center;
+}
+.stats {
+
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.main-menu {
+  text-align: center;
+}
+.characters {
+  width: 400px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+.character {
+  margin-top: 5px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;
 
 }
+.word {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.letter {
+  width: 25px;
+  height: 20px;
+  margin-left: 10px;
+  text-align: center;
+}
 .red {
-  border-bottom: 1px solid rgba(0, 0, 0, 1);
+  border: 1px solid rgba(0, 0, 0, 1);
+}
+.letter-input {
+  text-align: center;
+  margin-top: 10px;
 }
