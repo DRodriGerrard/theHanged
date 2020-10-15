@@ -5,15 +5,17 @@
 h1 {
   text-align: center;
 }
-.stats {
-
+.stats, .main-menu {
   margin-top: 10px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 }
-.main-menu {
+.main-menu, .main-content {
   text-align: center;
+}
+.button-start, .button-restart {
+  grid-column-start: 2;
 }
 .characters {
   width: 400px;
@@ -47,3 +49,20 @@ h1 {
   text-align: center;
   margin-top: 10px;
 }
+.hanged-photos {
+  width: 150px;
+  height: 200px;
+  margin: 20px auto;
+}
+.hanged {
+  height: 200px;
+}
+.results {
+  margin: 10px auto;
+  width: 200px;
+  border: 1px solid black;
+}
+.results p {
+  text-align: left;
+}
+

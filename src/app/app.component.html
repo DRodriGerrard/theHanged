@@ -4,7 +4,15 @@
   </div>
   <div class="main">
     <div class="main-menu">
-      <button class="button" (click)="start()">Start</button>
+      <div class="button-start">
+        <button class="button" (click)="start()" [hidden]="gameStarted">Start</button>
+      </div>
+      <div class="button-restart">
+        <button class="button" id="restart" (click)="restart()" [hidden]="!gameStarted">Restart</button>
+      </div>
+      <div class="button-clue">
+        <button type="button" (click)="reduceClue()" [hidden]="!gameStarted" [disabled]="clueDisabled || life === 1">Clue</button>
+      </div>
     </div>
     <div class="main-content">
       <div class="stats">
@@ -22,10 +30,15 @@
           <span *ngIf="letter.show">{{letter.character}}</span>
         </div>
       </div>
-      <!--<div class="letter-input" *ngIf="showWord">
-        <input type="text" #newLetter maxlength="1"/>
-        <button type="button" (click)="compareLetter(newLetter.value)">Check</button>
-      </div>-->
+      <div class="hanged-photos" *ngIf="showWord">
+        <img [src]="hanged" class="hanged"/>
+      </div>
+      <div class="results" *ngIf="showScore">
+        <h3>Score:</h3>
+        <p>Won: {{score.won}}</p>
+        <p>Lost - life: {{score.lost.life}}</p>
+        <p>Lost - time: {{score.lost.timeout}}</p>
+      </div>
     </div>
   </div>
 </div>

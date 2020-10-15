@@ -5,6 +5,14 @@ type Letter = {
   show:boolean
 }
 
+type Score = {
+  won: number,
+  lost: {
+    timeout: number,
+    life: number
+  }
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -40,18 +48,63 @@ export class AppComponent {
   }
   life:number = this.gameStructure.rules.life;
   clue:number = this.gameStructure.rules.clue;
+  clueDisabled:boolean = false;
+  clueUsed:string = "No";
+  gameFinished:boolean = true;
+  gameStarted:boolean = false;
+  //startInterval = setInterval(this.start, 1000);
+  //hangedImages: string[] = ["0", "1", "2", "3", "4", "5", "6"];
+  hanged:string = "../assets/images/"+this.life+".png";
+  showScore:boolean = false;
+  score:Score = JSON.parse(localStorage.getItem("score"));
 
   start() {
-    setInterval(() => {
-      if(this.time > 0) this.time += -1;
-    }, 1000);
+    this.gameStarted = !this.gameStarted;
+    this.gameFinished = !this.gameFinished;
+    this.life = 6;
+    this.time = 180;
 
-    setTimeout(() => {
-      this.generateRandomWord();
-    }, 0);
+    if (this.gameFinished === false) {
+      let interval = setInterval(() => {
+        if (this.time > 0) this.time += -1;
+        if (this.time === 0 || this.gameFinished === true) {
+          clearInterval(interval);
+          this.showWord = false;
+          console.log("time fuera!!")
+          if(this.score != null) this.score.lost.timeout += 1;
+          else {
+            this.score = {
+              won: 0,
+              lost: {
+                timeout: 0,
+                life: 0
+              }
+            };
+            this.score.lost.timeout += 1;
+          }
+
+          setTimeout(() => {
+            this.saveScore();
+          }, 500);
+
+          setTimeout(() => {
+            this.showScore = true;
+          }, 500);
+        }
+      }, 1000);
+
+      document.getElementById("restart").addEventListener("click", function(){
+        clearInterval(interval);
+      });
+
+      setTimeout(() => {
+        this.generateRandomWord();
+      }, 0);
+    }
   }
 
   generateRandomWord() {
+    if (this.letters.length > 0) this.letters = [];
     this.wordLetters.forEach(wordLetter=>{
       this.theLetter = {
         character: wordLetter.toUpperCase(),
@@ -69,7 +122,8 @@ export class AppComponent {
     let worDivs = document.getElementsByClassName("letter");
     this.letters.forEach((letter, index) => {
       if(letter.character != " ") worDivs[index].setAttribute("class","letter red");
-    })
+      else letter.show = true;
+    });
   }
 
   compareLetter(letterToCompare) {
@@ -88,14 +142,93 @@ export class AppComponent {
 
   guessLetter(indexes:number[]) {
     indexes.forEach(index => this.letters[index].show = true);
+    if(this.score != null) this.score.won += 1;
+    else {
+      this.score = {
+        won: 0,
+        lost: {
+          timeout: 0,
+          life: 0
+        }
+      };
+      this.score.won += 1;
+    }
+    setTimeout(() => {
+      this.saveScore();
+    }, 500);
+  }
+
+  reduceClue() {
+    this.clue += -1;
+    this.clueDisabled = true;
+    this.clueUsed = "Yes";
+    setTimeout(()=>{
+      this.reduceLife();
+    });
   }
 
   reduceLife() {
-    if (this.life === 0) this.endGame();
-    else return this.life += - 1;
+    if (this.life > 1) {
+      this.life += -1;
+      this.hanged = "../assets/images/"+this.life+".png";
+    }
+    else {
+      this.life += -1;
+      console.log("life fuera!!")
+
+      if(this.score != null) this.score.lost.life += 1;
+      else {
+        this.score = {
+          won: 0,
+          lost: {
+            timeout: 0,
+            life: 0
+          }
+        };
+        this.score.lost.life += 1;
+      }
+
+      setTimeout(() => {
+        this.saveScore();
+      }, 500);
+
+    }
   }
 
-  endGame() {
-    this.time = 0;
+  saveScore() {
+
+    setTimeout(() => {
+      this.isWordComplete();
+    }, 0);
   }
+
+  isWordComplete() {
+    if(this.letters.every(letter => letter.show)) {
+      this.showScore = true;
+      setTimeout(() => {
+        this.start();
+      }, 0);
+    }
+  }
+
+  restart() {
+    this.gameStarted = !this.gameStarted;
+    this.gameFinished = !this.gameFinished;
+    this.showScore = false;
+    this.randomWord= Math.floor(Math.random() * this.gameStructure.words.length);
+    this.wordLetters= this.gameStructure.words[this.randomWord].split("");
+    this.clue = 1;
+    this.clueDisabled = false;
+    this.life = 6;
+    this.hanged = "../assets/images/"+this.life+".png";
+    this.time = 180;
+    let characters = document.getElementsByClassName("character");
+    for (let index = 0; index < characters.length; index++) {
+      characters[index].removeAttribute("disabled");
+    }
+    setTimeout(() => {
+      this.start();
+    }, 0);
+  }
+
 }
